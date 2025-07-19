@@ -1,0 +1,124 @@
+<mxGraphModel>
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    
+    <!-- ************************* Stage 1 外框 ************************* -->
+    <mxCell 
+      id="stage1" 
+      value="Stage 1" 
+      style="shape=rectangle;fillColor=#D3D3D3;strokeColor=#FFA500;strokeWidth=2;fontSize=14;fontWeight=bold;" 
+      parent="1" 
+      vertex="1"
+    >
+      <mxGeometry x="20" y="20" width="300" height="280" /> <!-- 外框坐标：左上角(20,20)，宽300，高280 -->
+    </mxCell>
+    
+    <!-- ************************* PatchEmbedding 模块 ************************* -->
+    <mxCell 
+      id="patch_emb" 
+      value="PatchEmbedding&#10;------------------&#10;DepthwiseSepConv3D&#10;+ ChannelAttention3D" 
+      style="shape=rectangle;rounded=1;fillColor=#FFA500;strokeColor=#000000;strokeWidth=1;fontSize=12;align=center;valign=middle;" 
+      parent="stage1" 
+      vertex="1"
+    >
+      <mxGeometry x="30" y="30" width="280" height="70" /> <!-- 内部边距10，宽280，高70 -->
+    </mxCell>
+    
+    <!-- ************************* TransformerBlock 1 模块 ************************* -->
+    <mxCell 
+      id="tf_block1" 
+      value="TransformerBlock 1&#10;Self-Attention + MLP" 
+      style="shape=rectangle;fillColor=#FFFF00;strokeColor=#000000;strokeWidth=1;fontSize=12;align=center;valign=middle;" 
+      parent="stage1" 
+      vertex="1"
+    >
+      <mxGeometry x="30" y="110" width="280" height="50" /> <!-- 位于PatchEmbedding下方，间距10 -->
+    </mxCell>
+    
+    <!-- ************************* TransformerBlock 2 模块 ************************* -->
+    <mxCell 
+      id="tf_block2" 
+      value="TransformerBlock 2&#10;Self-Attention + MLP" 
+      style="shape=rectangle;fillColor=#FFFF00;strokeColor=#000000;strokeWidth=1;fontSize=12;align=center;valign=middle;" 
+      parent="stage1" 
+      vertex="1"
+    >
+      <mxGeometry x="30" y="170" width="280" height="50" /> <!-- 位于TransformerBlock 1下方，间距10 -->
+    </mxCell>
+    
+    <!-- ************************* LayerNorm 模块 ************************* -->
+    <mxCell 
+      id="layer_norm" 
+      value="LayerNorm" 
+      style="shape=rectangle;fillColor=#ADD8E6;strokeColor=#000000;strokeWidth=1;fontSize=12;align=center;valign=middle;" 
+      parent="stage1" 
+      vertex="1"
+    >
+      <mxGeometry x="30" y="230" width="280" height="30" /> <!-- 位于TransformerBlock 2下方，间距10 -->
+    </mxCell>
+    
+    <!-- ************************* 内部数据流箭头 ************************* -->
+    <!-- PatchEmbedding → TransformerBlock 1 -->
+    <mxCell 
+      id="edge1" 
+      style="shape=arrow;strokeColor=#000000;strokeWidth=1;" 
+      parent="stage1" 
+      edge="1"
+    >
+      <mxGeometry>
+        <mxPoint x="170" y="100" /> <!-- PatchEmbedding底部中心（x=30+280/2=170，y=30+70=100） -->
+        <mxPoint x="170" y="110" /> <!-- TransformerBlock 1顶部中心（y=110） -->
+      </mxGeometry>
+      <mxEdgeSource port="" cell="patch_emb" />
+      <mxEdgeTarget port="" cell="tf_block1" />
+    </mxCell>
+    
+    <!-- TransformerBlock 1 → TransformerBlock 2 -->
+    <mxCell 
+      id="edge2" 
+      style="shape=arrow;strokeColor=#000000;strokeWidth=1;" 
+      parent="stage1" 
+      edge="1"
+    >
+      <mxGeometry>
+        <mxPoint x="170" y="160" /> <!-- TransformerBlock 1底部中心（y=110+50=160） -->
+        <mxPoint x="170" y="170" /> <!-- TransformerBlock 2顶部中心（y=170） -->
+      </mxGeometry>
+      <mxEdgeSource port="" cell="tf_block1" />
+      <mxEdgeTarget port="" cell="tf_block2" />
+    </mxCell>
+    
+    <!-- TransformerBlock 2 → LayerNorm -->
+    <mxCell 
+      id="edge3" 
+      style="shape=arrow;strokeColor=#000000;strokeWidth=1;" 
+      parent="stage1" 
+      edge="1"
+    >
+      <mxGeometry>
+        <mxPoint x="170" y="220" /> <!-- TransformerBlock 2底部中心（y=170+50=220） -->
+        <mxPoint x="170" y="230" /> <!-- LayerNorm顶部中心（y=230） -->
+      </mxGeometry>
+      <mxEdgeSource port="" cell="tf_block2" />
+      <mxEdgeTarget port="" cell="layer_norm" />
+    </mxCell>
+    
+    <!-- ************************* 右侧特征输出箭头（指向Decoder） ************************* -->
+    <mxCell 
+      id="edge_s1" 
+      style="shape=arrow;strokeColor=#FFA500;strokeWidth=2;fontSize=12;" 
+      parent="1" 
+      edge="1"
+    >
+      <mxGeometry>
+        <mxPoint x="320" y="160" /> <!-- Stage 1右侧中心（x=20+300=320，y=20+280/2=160） -->
+        <mxPoint x="400" y="160" /> <!-- 指向Decoder方向（可调整终点x坐标） -->
+      </mxGeometry>
+      <mxEdgeSource port="" cell="stage1" />
+      <mxEdgeTarget port="" cell="" /> <!-- 可关联Decoder模块的cell ID（如"mlp_proj"） -->
+      <mxText value="S1 (H/2×W/2×D/2, C1)" style="align=center;valign=middle;" /> <!-- 特征标注 -->
+    </mxCell>
+    
+  </root>
+</mxGraphModel>
